@@ -21,8 +21,8 @@ module.exports.run = async function() {
 };
 
 module.exports.onLoad = async () => {
-  const versionURL = 'https://raw.githubusercontent.com/zyrostran/autodownload/main/version.json';
-  const fileURL = 'https://raw.githubusercontent.com/zyrostran/autodownload/main/autodown.js';
+  const versionURL = 'https://github.com/HoangProcoder/mld/raw/main/version.json';
+  const fileURL = 'https://github.com/HoangProcoder/mld/raw/main/autodown.js';
   const localFilePath = __dirname '/autodown.js';
 
   try {
