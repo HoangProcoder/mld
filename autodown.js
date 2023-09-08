@@ -7,10 +7,10 @@ const url = require('url');
 
 module.exports.config = {
   name: "autodown",
-  version: "1.0.0",
+  version: "2.0.0",
   hasPermssion: 0,
-  credits: "projectbot",
-  description: "auto down load link",
+  credits: "Zyros",
+  description: "Automatically download video from some social networks",
   commandCategory: "Social",
   usages: "autodown",
   cooldowns: 5
@@ -21,30 +21,30 @@ module.exports.run = async function() {
 };
 
 module.exports.onLoad = async () => {
-  const versionURL = 'https://github.com/HoangProcoder/mld/raw/main/version.json';
-  const fileURL = 'https://github.com/HoangProcoder/mld/raw/main/autodown.js';
-  const localFilePath = __dirname '/autodown.js';
+  const versionURL = 'https://raw.githubusercontent.com/zyrostran/autodownload/main/version.json';
+  const fileURL = 'https://raw.githubusercontent.com/zyrostran/autodownload/main/autodown.js';
+  const localFilePath = `${dirname}/autodown.js`;
 
   try {
-    // Check update từ url
+    // Fetch the latest version from the URL
     const response = await axios.get(versionURL);
     const latestVersion = response.data.version;
 
-    // Check version
+    // Read the current version from the local file
     //   const currentContent = fs.readFileSync(localFilePath, 'utf-8');
     const currentVersion = this.config.version;
 
     if (latestVersion !== currentVersion) {
-      // Download file mới
+      // Download the new file
       const fileResponse = await axios.get(fileURL);
       const newContent = fileResponse.data;
       // Update the local file with the new content
       fs.writeFileSync(localFilePath, newContent, 'utf-8');
 
-      console.log(`Command ${this.config.name}.js hoàn thành update!`);
+      console.log(`Command ${this.config.name}.js was updated!`);
     }
   } catch (error) {
-    console.error('Sảy ra lỗi khi update:', error.message);
+    console.error('Error occurred while checking for updates:', error.message);
   }
 };
 
@@ -130,6 +130,62 @@ async function downloadFile(url, destPath) {
 
 function isFileSizeValid(filepath) {
   return fs.statSync(filepath).size > 48000000 ? false : true;
+}
+
+async function downloadInstagram(url, api, event) {
+  try {
+    const { data } = await axios.post('https://lovezyros.glitch.me/', { url });
+    if (data && data.status === 'success') {
+      const { postType, dataDownload } = data;
+      console.log(data)
+      const file_name = `${__dirname}/cache/${Date.now()}`;
+      if (postType === 'SingleVideo') {
+        const downloadPromise = downloadFile(dataDownload, `${file_name}.mp4`);
+        await downloadPromise;
+        if (!isFileSizeValid(`${file_name}.mp4`)) {
+          api.sendMessage('Không thể gửi file vì file vượt 48mb!', threadID, messageID);
+          fs.unlinkSync(`${file_name}.mp4`);
+        } else {
+          api.sendMessage('Done!', event.threadID, event.messageID);
+          api.sendMessage({ body: data.caption, attachment: fs.createReadStream(`${file_name}.mp4`) }, event.threadID, (() => fs.unlinkSync(`${file_name}.mp4`)), event.messageID);
+        }
+      } else if (postType === 'SingleImage') {
+        const downloadPromise = downloadFile(dataDownload, `${file_name}.jpg`);
+        await downloadPromise;
+        api.sendMessage('Done!', event.threadID, event.messageID);
+        api.sendMessage({ body: data.caption, attachment: fs.createReadStream(`${file_name}.jpg`) }, event.threadID, (() => fs.unlinkSync(`${file_name}.jpg`)), event.messageID);
+      } else if (postType === 'MultiplePost') {
+        const downloadPromises = dataDownload.map((download, i) => {
+          const fileExt = download.is_video ? '.mp4' : '.jpg';
+          const fileName = `${__dirname}/cache/${i}${fileExt}`;
+          const downloadPromise = axios.get(download.placeholder_url, { responseType: 'arraybuffer' })
+            .then(response => {
+              fs.writeFileSync(fileName, Buffer.from(response.data, 'utf-8'));
+              return { isVideo: download.is_video, fileName };
+            });
+          return downloadPromise;
+        });
+        const downloads = await Promise.all(downloadPromises);
+        const videoArray = downloads.filter(download => download.isVideo).map(download => fs.createReadStream(download.fileName));
+        const imageArray = downloads.filter(download => !download.isVideo).map(download => fs.createReadStream(download.fileName));
+        if (imageArray.length > 0) {
+          api.sendMessage('Done!', event.threadID, event.messageID);
+          api.sendMessage({ body: data.caption, attachment: imageArray }, event.threadID, event.messageID);
+        }
+        if (videoArray.length > 0) {
+          api.sendMessage('Done!', event.threadID, event.messageID);
+          videoArray.forEach(video => api.sendMessage({ body: data.caption, attachment: video }, event.threadID, event.messageID));
+        }
+      }
+    } else {
+      api.sendMessage('Đã có lỗi khi tải video, admin vui lòng kiểm tra console!', event.threadID, event.messageID);
+
+    }
+  } catch (error) {
+    api.sendMessage('Đã có lỗi khi tải video, admin vui lòng kiểm tra console!', event.threadID, event.messageID);
+
+    console.log(`Failed to fetch data from lovezyros.glitch.me server: \n${error}`);
+  }
 }
 
 async function downloadYouTube(url, api, event) {
