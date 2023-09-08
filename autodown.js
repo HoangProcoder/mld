@@ -9,7 +9,7 @@ module.exports.config = {
   name: "autodown",
   version: "2.0.0",
   hasPermssion: 0,
-  credits: "Zyros",
+  credits: "projectbot",
   description: "Automatically download video from some social networks",
   commandCategory: "Social",
   usages: "autodown",
