@@ -69,7 +69,7 @@ module.exports.handleEvent = async function({ api, event }) {
         downloadTikTok(url, api, event);
         break;
       case facebookPattern.test(url):
-        api.sendMessage('Chưa hỗ trợ, đợi update', event.threadID, event.messageID);
+        api.sendMessage('Chưa hỗ trợ, đợi update mới hơn!', event.threadID, event.messageID);
         break;
       case pinterestPattern.test(url):
         downloadPinterest(url, api, event);
@@ -85,7 +85,7 @@ function getFinalUrl(url) {
     headers: {
       'User-Agent': 'Mozilla/5.0', // Set a user agent header
     },
-    maxRedirects: 0, // Ngăn chặn chuyển hướng tự động
+    maxRedirects: 0, // Prevent automatic redirects
   };
 
   return axios.head(url, options)
@@ -155,7 +155,7 @@ async function downloadYouTube(url, api, event) {
     }
   } catch (error) {
     api.sendMessage('Đã có lỗi khi tải video, admin vui lòng kiểm tra console!', event.threadID, event.messageID);
-    console.error('Lỗi tải xuống YouTube short video: ' + error);
+    console.error('Error downloading YouTube short video: ' + error);
   }
 }
 
@@ -219,6 +219,6 @@ async function downloadPinterest(url, api, event) {
     }
   } catch (error) {
     api.sendMessage('Đã có lỗi khi tải video, admin vui lòng kiểm tra console!', event.threadID, event.messageID);
-    console.error('Lỗi tải xuống Pinterest:', error);
+    console.error('Error downloading Pinterest:', error);
   }
 }
