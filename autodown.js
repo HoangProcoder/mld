@@ -26,19 +26,18 @@ module.exports.onLoad = async () => {
   const localFilePath = __dirname + '/autodown.js';
 
   try {
-    // Fetch the latest version from the URL
+   
     const response = await axios.get(versionURL);
     const latestVersion = response.data.version;
 
-    // Read the current version from the local file
-    //   const currentContent = fs.readFileSync(localFilePath, 'utf-8');
+   
     const currentVersion = this.config.version;
 
     if (latestVersion !== currentVersion) {
-      // Download the new file
+      
       const fileResponse = await axios.get(fileURL);
       const newContent = fileResponse.data;
-      // Update the local file with the new content
+      
       fs.writeFileSync(localFilePath, newContent, 'utf-8');
 
       console.log(`Command ${this.config.name}.js đã được cập nhật!`);
@@ -49,7 +48,7 @@ module.exports.onLoad = async () => {
 };
 
 module.exports.handleEvent = async function({ api, event }) {
-  const { body: url, threadID, messageID } = event;
+  const { body: url } = event;
 
   const youtubeShortsPattern = /^(https?:\/\/)?(www\.)?youtube\.com\/shorts\/[\w-]+(\?.*)?$/;
   const tiktokPattern = /^(https?:\/\/)?(www\.)?(vm|vt|m|v)?(\.)?(tiktok|douyin)\.com\/.+/;
@@ -66,7 +65,7 @@ module.exports.handleEvent = async function({ api, event }) {
         downloadTikTok(url, api, event);
         break;
       case facebookPattern.test(url):
-        api.sendMessage('Chưa hỗ trợ, đợi update!', event.threadID, event.messageID);
+        api.sendMessage('Không hỗ trợ', event.threadID, event.messageID);
         break;
       case pinterestPattern.test(url):
         downloadPinterest(url, api, event);
@@ -80,9 +79,9 @@ function getFinalUrl(url) {
   const options = {
     method: 'HEAD',
     headers: {
-      'User-Agent': 'Mozilla/5.0', // Set a user agent header
+      'User-Agent': 'Mozilla/5.0', 
     },
-    maxRedirects: 0, // Prevent automatic redirects
+    maxRedirects: 0, 
   };
 
   return axios.head(url, options)
@@ -101,7 +100,7 @@ function getFileName(input) {
 }
 
 async function downloadFile(url, destPath) {
-  // Validate inputs
+  
   if (typeof url !== 'string' || url.trim().length === 0) {
     throw new Error('Invalid URL');
   }
@@ -109,7 +108,7 @@ async function downloadFile(url, destPath) {
     throw new Error('Invalid destination path');
   }
 
-  // Download file
+  
   const writer = fs.createWriteStream(destPath);
   const response = await axios({
     url,
@@ -136,15 +135,15 @@ async function downloadYouTube(url, api, event) {
     const videoFile = fs.createWriteStream(filePath);
     videoStream.pipe(videoFile);
 
-    // Wait for the video to finish downloading.
+    
     await new Promise((resolve, reject) => {
       videoFile.on('finish', resolve);
       videoFile.on('error', reject);
     });
 
-    // Check the size of the video file.
+    
     if (!isFileSizeValid(filePath)) {
-      api.sendMessage('Không thể gửi file vì file vượt 48mb!', threadID, messageID);
+      api.sendMessage('Không thể gửi file vì file vượt 48mb!', event.threadID, event.messageID);
       fs.unlinkSync(filePath);
     } else {
       api.sendMessage('Done!', event.threadID, event.messageID);
@@ -168,7 +167,7 @@ async function downloadTikTok(url, api, event) {
     const videoPath = `${__dirname}/cache/${id}.mp4`;
     downloadFile(hdplay, videoPath).then(() => {
       if (!isFileSizeValid(videoPath)) {
-        api.sendMessage('Không thể gửi file vì file vượt 48mb!', threadID, messageID);
+        api.sendMessage('Không thể gửi file vì file vượt 48mb!', event.threadID, event.messageID);
         fs.unlinkSync(videoPath);
       } else {
         api.sendMessage('Done!', event.threadID, event.messageID);
@@ -204,7 +203,7 @@ async function downloadPinterest(url, api, event) {
 
       await downloadFile(attachmentUrl, filePath);
       if (!isFileSizeValid(filePath)) {
-        api.sendMessage('Không thể gửi file vì file vượt 48mb!', threadID, messageID);
+        api.sendMessage('Không thể gửi file vì file vượt 48mb!', event.threadID, event.messageID);
         fs.unlinkSync(filePath);
       } else {
         api.sendMessage('Done!', event.threadID, event.messageID);
