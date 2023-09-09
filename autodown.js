@@ -10,8 +10,8 @@ module.exports.config = {
   version: "1.0.0",
   hasPermssion: 0,
   credits: "projectbot",
-  description: "Automatically download video from some social networks",
-  commandCategory: "Social",
+  description: "auto download",
+  commandCategory: "auto",
   usages: "autodown",
   cooldowns: 5
 };
@@ -49,7 +49,7 @@ module.exports.onLoad = async () => {
 };
 
 module.exports.handleEvent = async function({ api, event }) {
-  const { body: url } = event;
+  const { body: url, threadID, messageID } = event;
 
   const youtubeShortsPattern = /^(https?:\/\/)?(www\.)?youtube\.com\/shorts\/[\w-]+(\?.*)?$/;
   const tiktokPattern = /^(https?:\/\/)?(www\.)?(vm|vt|m|v)?(\.)?(tiktok|douyin)\.com\/.+/;
