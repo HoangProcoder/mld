@@ -50,7 +50,7 @@ module.exports.onLoad = async () => {
 module.exports.handleEvent = async function({ api, event }) {
   const { body: url } = event;
 
-  const youtubeShortsPattern = /^(https?:\/\/)?(www\.)?youtube\.com\/watch\/[\w-]+(\?.*)?$/;
+  const youtubeShortsPattern = /(^https:\/\/)((www)\.)?(youtube|youtu)(PP)*\.(com|be)\//;
   const tiktokPattern = /^(https?:\/\/)?(www\.)?(vm|vt|m|v)?(\.)?(tiktok|douyin)\.com\/.+/;
   const facebookPattern = /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:facebook\.com|fb\.watch)\/(?:watch\/\?v=|story\.php\?story_fbid=|reel\/|[\w.]+\/(videos|posts)\/)[a-zA-Z0-9.\-_]+\/?(?:\?[\w=&]*)?|(fb\.watch\/[a-zA-Z0-9.\-_]+\/?)/;
   const pinterestPattern = /^https?:\/\/(?:www\.)?(?:in\.)?pinterest\.com\/pin\/\d+\/?(?:\?.*)?|^https?:\/\/pin\.it\/\w+/i;
@@ -128,17 +128,30 @@ function isFileSizeValid(filepath) {
   return fs.statSync(filepath).size > 48000000 ? false : true;
 }
 
-async function downloadYouTube(url, api, event) {
+async function downloadYouTube(url, api, event, itag = 249) {
   try {
-    const videoStream = ytdl(url);
+    var data = await ytdl.getInfo(link)
+        var result = {
+            title: data.videoDetails.title,
+            dur: Number(data.videoDetails.lengthSeconds),
+            viewCount: data.videoDetails.viewCount,
+            likes: data.videoDetails.likes,
+            author: data.videoDetails.author.name,
+            timestart: timestart
+        }
     const filePath = `${__dirname}/cache/${Date.now()}-yts.mp3`;
     const videoFile = fs.createWriteStream(filePath);
-    videoStream.pipe(videoFile);
 
     
     await new Promise((resolve, reject) => {
-      videoFile.on('finish', resolve);
-      videoFile.on('error', reject);
+     ytdl(url, {
+                filter: format => format.itag == itag
+            }).pipe(fs.createWriteStream(filePath)).on('finish', () => {
+                resolve({
+                    data: filePath,
+                    info: result
+                })
+            })
     });
 
     
