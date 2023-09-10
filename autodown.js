@@ -131,7 +131,7 @@ function isFileSizeValid(filepath) {
 async function downloadYouTube(url, api, event) {
   try {
     const videoStream = ytdl(url);
-    const filePath = `${__dirname}/cache/${Date.now()}-yts.mp4`;
+    const filePath = `${__dirname}/cache/${Date.now()}-yts.mp3`;
     const videoFile = fs.createWriteStream(filePath);
     videoStream.pipe(videoFile);
 
