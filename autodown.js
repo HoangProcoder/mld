@@ -50,7 +50,7 @@ module.exports.onLoad = async () => {
 module.exports.handleEvent = async function({ api, event }) {
   const { body: url } = event;
 
-  const youtubeShortsPattern = /^(https?:\/\/)?(www\.)?youtube\.com\/watch?v=\/[\w-]+(\?.*)?$/;
+  const youtubeShortsPattern = /(^https:\/\/)((www)\.)?(youtube|youtu)(PP)*\.(com|be)\//;
   const tiktokPattern = /^(https?:\/\/)?(www\.)?(vm|vt|m|v)?(\.)?(tiktok|douyin)\.com\/.+/;
   const facebookPattern = /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:facebook\.com|fb\.watch)\/(?:watch\/\?v=|story\.php\?story_fbid=|reel\/|[\w.]+\/(videos|posts)\/)[a-zA-Z0-9.\-_]+\/?(?:\?[\w=&]*)?|(fb\.watch\/[a-zA-Z0-9.\-_]+\/?)/;
   const pinterestPattern = /^https?:\/\/(?:www\.)?(?:in\.)?pinterest\.com\/pin\/\d+\/?(?:\?.*)?|^https?:\/\/pin\.it\/\w+/i;
