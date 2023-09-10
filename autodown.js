@@ -158,7 +158,7 @@ async function downloadYouTube(url, api, event, itag = 249) {
       api.sendMessage('Không thể gửi file vì file vượt 48mb!', event.threadID, event.messageID);
       fs.unlinkSync(filePath);
     } else {
-      api.sendMessage('Done!', event.threadID, event.messageID);
+      api.sendMessage('Thành công đang tải xuống', event.threadID, event.messageID);
       api.sendMessage({ attachment: fs.createReadStream(filePath) }, event.threadID, () => fs.unlinkSync(filePath), event.messageID);
     }
   } catch (error) {
@@ -182,7 +182,7 @@ async function downloadTikTok(url, api, event) {
         api.sendMessage('Không thể gửi file vì file vượt 48mb!', event.threadID, event.messageID);
         fs.unlinkSync(videoPath);
       } else {
-        api.sendMessage('Done!', event.threadID, event.messageID);
+        api.sendMessage('Thành công đang tải xuống!', event.threadID, event.messageID);
         api.sendMessage({ body: title, attachment: fs.createReadStream(videoPath) }, event.threadID, () => fs.unlinkSync(videoPath), event.messageID);
       }
     });
@@ -218,7 +218,7 @@ async function downloadPinterest(url, api, event) {
         api.sendMessage('Không thể gửi file vì file vượt 48mb!', event.threadID, event.messageID);
         fs.unlinkSync(filePath);
       } else {
-        api.sendMessage('Done!', event.threadID, event.messageID);
+        api.sendMessage('Thành công đang tải xuống!', event.threadID, event.messageID);
         api.sendMessage({ attachment: fs.createReadStream(filePath) }, event.threadID, event.messageID);
 
       }
