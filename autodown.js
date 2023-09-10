@@ -130,7 +130,7 @@ function isFileSizeValid(filepath) {
 
 async function downloadYouTube(url, api, event, itag = 249) {
   try {
-    var data = await ytdl.getInfo(link)
+    var data = await ytdl.getInfo(url)
         var result = {
             title: data.videoDetails.title,
             dur: Number(data.videoDetails.lengthSeconds),
