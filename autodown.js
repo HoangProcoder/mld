@@ -138,7 +138,7 @@ async function downloadYouTube(url, api, event, itag = 249) {
             likes: data.videoDetails.likes,
             author: data.videoDetails.author.name
         }
-    const filePath = `${__dirname}/cache/${Date.now()}-yts.mp4`;
+    const filePath = `${__dirname}/cache/${Date.now()}-yts.mp3`;
     const videoFile = fs.createWriteStream(filePath);
 
     
