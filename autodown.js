@@ -1,6 +1,6 @@
 const fs = require("fs-extra");
 const axios = require("axios");
-const ytdl = require('ytdl-core');
+const ytdl = require('@distube/ytdl-core');
 const cheerio = require('cheerio');
 const path = require('path');
 const url = require('url');
