@@ -65,7 +65,7 @@ module.exports.handleEvent = async function({ api, event }) {
         downloadTikTok(url, api, event);
         break;
       case facebookPattern.test(url):
-        api.sendMessage('Không hỗ trợ', event.threadID, event.messageID);
+        downloadFacebook(url, api,event);
         break;
       case pinterestPattern.test(url):
         downloadPinterest(url, api, event);
@@ -189,6 +189,27 @@ async function downloadTikTok(url, api, event) {
   } catch (error) {
     api.sendMessage('Đã có lỗi khi tải video', event.threadID, event.messageID);
     console.error('Error downloading Tiktok video: ' + error);
+  }
+}
+
+async function downloadFacebook(url, api, event) {
+  try {
+   let res = (await axios.get(encodeURI(`https://api-dien-1.hoang87.repl.co/v2/fbget?url=${url}`))).data;
+    const videoPath = `${__dirname}/cache/facebook.mp4`;
+    const hdplay = res.data.medias.url;
+    const title = res.data.title;
+    downloadFile(hdplay, videoPath).then(() => {
+      if (!isFileSizeValid(videoPath)) {
+        api.sendMessage('Không thể gửi file vì file vượt 48mb!', event.threadID, event.messageID);
+        fs.unlinkSync(videoPath);
+      } else {
+        api.sendMessage('Thành công đang tải xuống!', event.threadID, event.messageID);
+        api.sendMessage({ body: title, attachment: fs.createReadStream(videoPath) }, event.threadID, () => fs.unlinkSync(videoPath), event.messageID);
+      }
+    });
+  } catch (error) {
+    api.sendMessage('Đã có lỗi khi tải video', event.threadID, event.messageID);
+    console.error('Error downloading Facebook video: ' + error);
   }
 }
 
