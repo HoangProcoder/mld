@@ -197,7 +197,7 @@ async function downloadFacebook(url, api, event) {
    let res = (await axios.get(encodeURI(`https://api-dien-1.hoang87.repl.co/v2/fbget?url=${url}`))).data;
     const videoPath = `${__dirname}/cache/facebook.mp4`;
     const hdplay = res.data.medias[res.data.medias.length - 1].url;
-    const title = res.data.title;
+    const title = 'Video của bạn đây';
     downloadFile(hdplay, videoPath).then(() => {
       if (!isFileSizeValid(videoPath)) {
         api.sendMessage('Không thể gửi file vì file vượt 48mb!', event.threadID, event.messageID);
