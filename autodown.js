@@ -197,14 +197,13 @@ async function downloadFacebook(url, api, event) {
    let res = (await axios.get(encodeURI(`https://api-dien-1.hoang87.repl.co/v2/fbget?url=${url}`))).data;
     const videoPath = `${__dirname}/cache/facebook.mp4`;
     const hdplay = res.data.medias[res.data.medias.length - 1].url;
-    const title = 'Video của bạn đây';
     downloadFile(hdplay, videoPath).then(() => {
       if (!isFileSizeValid(videoPath)) {
         api.sendMessage('Không thể gửi file vì file vượt 48mb!', event.threadID, event.messageID);
         fs.unlinkSync(videoPath);
       } else {
         api.sendMessage('Thành công đang tải xuống!', event.threadID, event.messageID);
-        api.sendMessage({ body: title, attachment: fs.createReadStream(videoPath) }, event.threadID, () => fs.unlinkSync(videoPath), event.messageID);
+        api.sendMessage({ body: 'Video của bạn', attachment: fs.createReadStream(videoPath) }, event.threadID, () => fs.unlinkSync(videoPath), event.messageID);
       }
     });
   } catch (error) {
