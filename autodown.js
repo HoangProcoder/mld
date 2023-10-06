@@ -23,7 +23,7 @@ module.exports.run = async function() {
 module.exports.onLoad = async () => {
   const versionURL = 'https://raw.githubusercontent.com/HoangProcoder/mld/main/version.json';
   const fileURL = 'https://raw.githubusercontent.com/HoangProcoder/mld/main/autodown.js';
-  const localFilePath = __dirname + '/autodown.js';
+  const localFilePath = __dirname + `/${this.config.name}.js`;
 
   try {
    
