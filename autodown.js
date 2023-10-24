@@ -10,6 +10,7 @@ module.exports.config = {
   version: "1.0.0",
   hasPermssion: 0,
   credits: "projectbot",
+  usePrefix: true,
   description: "auto download",
   commandCategory: "auto",
   usages: "autodown",
