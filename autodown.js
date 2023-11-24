@@ -195,7 +195,7 @@ async function downloadTikTok(url, api, event) {
 
 async function downloadFacebook(url, api, event) {
   try {
-   let res = (await axios.get(encodeURI(`https://taoanhapi-ynrru.run-us-west2.goorm.site/v2/fbget?url=${url}`))).data;
+   let res = (await axios.get(encodeURI(`http://localhost:8888/v2/fbget?url=${url}`))).data;
     const videoPath = `${__dirname}/cache/${Date.now()}.mp4`;
     const hdplay = res.data.medias[res.data.medias.length - 1].url;
     downloadFile(hdplay, videoPath).then(() => {
