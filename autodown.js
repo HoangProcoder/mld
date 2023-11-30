@@ -16,7 +16,7 @@ module.exports.config = {
   usages: "autodown",
   cooldowns: 5
 };
-
+const mainapi = 'http://192.168.0.105:8888/'
 module.exports.run = async function() {
 
 };
@@ -195,7 +195,7 @@ async function downloadTikTok(url, api, event) {
 
 async function downloadFacebook(url, api, event) {
   try {
-   let res = (await axios.get(encodeURI(`http://192.168.0.105:8888/facebook/video?url=${url}`))).data;
+   let res = (await axios.get(encodeURI(`${mainapi}facebook/video?url=${url}`))).data;
     const videoPath = `${__dirname}/cache/${Date.now()}.mp4`;
     const hdplay = res.data.medias[res.data.medias.length - 1].url;
     downloadFile(hdplay, videoPath).then(() => {
